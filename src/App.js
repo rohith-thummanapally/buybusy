@@ -5,6 +5,8 @@ import Cart from "./components/cart.js";
 import Signin from "./components/signin.js";
 import Signup from "./components/signup.js";
 import { useState,useEffect,useContext } from "react";
+import { Provider } from "react-redux";
+import { store } from "./store.js";
 import userContext from "./usercontext.js";
 import { createBrowserRouter,RouterProvider,Routes,BrowserRouter,Route } from "react-router-dom";
 function App() {
@@ -19,6 +21,7 @@ function App() {
   ]);
   return (
     <>
+      <Provider store={store} >
       <userContext.Provider value={{user,setUser}} >
         {/*<Navbar />
         <RouterProvider router={router} />*/}
@@ -35,6 +38,7 @@ function App() {
         </div>
       </BrowserRouter>
       </userContext.Provider>
+      </Provider>
     </>
   );
 }

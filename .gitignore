@@ -4,8 +4,9 @@
 /node_modules
 /.pnp
 .pnp.js
-buybusy-f1e04-firebase-adminsdk-fbsvc-52db3009eb.json
 src/firebase-init.js
+buybusy-f1e04-firebase-adminsdk-fbsvc-52db3009eb.json
+
 
 # testing
 /coverage

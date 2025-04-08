@@ -3,20 +3,27 @@ import userContext from "../usercontext";
 import { db } from "../firebase-init";
 import Items from "./items";
 import { getDocs,collection,query,doc, getDoc,where, setDoc,addDoc } from "firebase/firestore";
+import { useSelector,useDispatch } from "react-redux";
+import { authstate } from "../redux/authslice";
+import { getcartitemsthunk,cartactions,cartreducer,cartstate,removeitemsthunk, addordecthunk } from "../redux/cartslice";
 function Cart()
 {
-    let {user,setUser}=useContext(userContext);
-    let [cartid,setcartid]=useState('');
+    const {user}=useSelector(authstate);
+    /*let [cartid,setcartid]=useState('');
     let [cartitems,setcartitems]=useState([]);
-    let [total,setTotal]=useState(Number(0));
+    let [total,setTotal]=useState(Number(0));*/
+    const dispatch=useDispatch();
+    let {cartitems,total,cartid}=useSelector(cartstate);
+    console.log(cartitems);
     let userdoc=doc(db,'users',user);
     useEffect(
         ()=>{
-            fetchdata();
+            //fetchdata();
+            dispatch(getcartitemsthunk());
         },
         []
     );
-    useEffect(()=>{
+    /*useEffect(()=>{
         console.log('in my items');
         console.log(cartitems);
     },[cartitems])
@@ -69,31 +76,18 @@ function Cart()
         });
         
     }
-
+    */
     async function removefromcart(productid)
     {
-        let cartdoc=await getDoc(doc(db,'userCart',cartid));
-        if(cartdoc.exists())
-        {
-            let cartdata=cartdoc.data();
-            let tproducts=cartdoc.data()['product'];
-            tproducts=tproducts.filter((item)=>{
-                console.log(item['productid']['id'],'--',productid);
-                if(item['productid']['id']==productid)
-                {
-                    return false;
-                }
-                return true;
-            })
-            console.log(tproducts);
-            cartdata['product']=tproducts;
-            await setDoc(doc(db,'userCart',cartid),cartdata);
-            fetchdata();
-        }
+        dispatch(removeitemsthunk({productid}));
+        dispatch(getcartitemsthunk());
     }
     async function addordecitem(productid,counter)
     {
-        console.log('in add or dec item'+cartid);
+        console.log('in add or dec function'+productid+'--'+counter);
+        dispatch(addordecthunk({'productid':productid,'counter':counter}));
+        //dispatch(getcartitemsthunk());
+        /*console.log('in add or dec item'+cartid);
         let cartdoc=await getDoc(doc(db,'userCart',cartid));
         if(cartdoc.exists())
         {
@@ -114,8 +108,9 @@ function Cart()
             console.log(tproducts);
             cartdata['product']=tproducts;
             await setDoc(doc(db,'userCart',cartid),cartdata);
-            fetchdata();
-        }
+            //fetchdata();
+            dispatch(getcartitemsthunk());
+        }*/
     }
     async function purchaseitems(user)
     {
