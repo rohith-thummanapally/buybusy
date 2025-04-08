@@ -5,7 +5,7 @@
 /.pnp
 .pnp.js
 buybusy-f1e04-firebase-adminsdk-fbsvc-52db3009eb.json
-firebase-init.js
+src/firebase-init.js
 
 # testing
 /coverage
