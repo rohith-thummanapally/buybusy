@@ -1,25 +1,30 @@
 import { useContext } from "react";
 import { db } from "../firebase-init";
-import userContext from "../usercontext";
+//import userContext from "../usercontext";
 import { addDoc,collection,doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { signupthunk } from "../redux/authslice";
+import { useDispatch } from "react-redux";
 function Signup()
 {
-    let {user,setUser}=useContext(userContext);
+    //let {user,setUser}=useContext(userContext);
+    let dispatch=useDispatch();
     let navigate=useNavigate();
     const createAccount=async(e)=>{
+        
         e.preventDefault();
         let name=e.target[0].value;
         let email=e.target[1].value;
         let password=e.target[2].value;
-        let conn=collection(db,'users');
+        dispatch(signupthunk({name:name,email:email,password:password,nav:navigate}));
+        /*let conn=collection(db,'users');
         let newdoc=await addDoc(conn,{name,email,password});
         console.log(newdoc.id);
         if(newdoc.id)
         {
             setUser(newdoc.id);
             navigate('/');
-        }
+        }*/
     }
     return(
         <div style={styles.signuppage}>

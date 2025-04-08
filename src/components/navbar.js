@@ -1,10 +1,13 @@
 import userContext from "../usercontext";
 import { useContext } from "react";
 import { NavLink,BrowserRouter } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { authstate } from "../redux/authslice";
 function Navbar()
 {
-    let {user,setUser}=useContext(userContext);
-
+    let {useri,setUser}=useContext(userContext);
+    let {user}=useSelector(authstate);
+    console.log(user);
     return (
         <div style={{display:'flex',justifyContent:'space-between',padding:'10px 25px 10px 100px'}}>
             <div style={{display:'flex',flex:4,alignItems:'center'}}>

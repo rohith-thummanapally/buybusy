@@ -3,9 +3,12 @@ import { db } from "../firebase-init";
 import userContext from "../usercontext";
 //import { query ,collection,getDoc,getDocs,doc,where,} from 'firebase/firestore';
 import { getDocs,collection,query,doc, getDoc,where, setDoc,addDoc } from "firebase/firestore";
+import { useSelector } from "react-redux";
+import { authstate } from "../redux/authslice";
 function Myorders()
 {
-    let {user,setUser}=useContext(userContext);
+    //let {user,setUser}=useContext(userContext);
+    const {user}=useSelector(authstate);
     let userdoc=doc(db,'users',user);
     //let userdoc = user?.uid ? doc(db, 'users', user.uid) : null;
     let [orders,setorders]=useState([]);

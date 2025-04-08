@@ -4,19 +4,26 @@ import { db } from "../firebase-init.js";
 import { getDocs,getDoc,doc,collection,query,where, setDoc, addDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Items from "./items.js";
+import { useSelector,useDispatch } from "react-redux";
+import { authstate } from "../redux/authslice";
+import { getproductsthunk,productsactions,productsstate } from "../redux/productsslice.js";
+import { addtocartthunk } from "../redux/cartslice.js";
 function Dashboard()
 {
-    const {user,setUser}=useContext(userContext);
-    const [products,setItems]=useState([]);
-    const [pfilter,setprice]=useState(5000);
-    const [searchtext,setText]=useState('');
-    const [categeories,setCategeories]=useState({
+    //const {user,setUser}=useContext(userContext);
+    const {user}=useSelector(authstate);
+    const {products,pfilter,searchtext,categeories}=useSelector(productsstate);
+
+    //const [products,setItems]=useState([]);
+    //const [pfilter,setprice]=useState(5000);
+    //const [searchtext,setText]=useState('');
+    /*const [categeories,setCategeories]=useState({
         mensclothing:true,
         womensclothing:true,
         jewellery:true,
         electronics:true
-    });
-
+    });*/
+    const dispatch=useDispatch();
     let navigate=useNavigate();
     async function fetchdata()
     {
@@ -83,27 +90,33 @@ function Dashboard()
             });
             myitems.push(tarr);
             //console.log(myitems);
-            setItems(myitems);
+            //setItems(myitems);
     }
     useEffect(()=>{
-        fetchdata();
+        //fetchdata();
+        dispatch(getproductsthunk());
     },[]);
-    useEffect(()=>{
-        fetchdata();
-    },[pfilter,searchtext]);
+    /*useEffect(()=>{
+        //fetchdata();
+        dispatch(productsactions.setFilter(pfilter));
+        dispatch(getproductsthunk());
+    },[pfilter,searchtext]);*/
     function handleCategeories(e)
     {
         //console.log(e.target.checked);
         //console.log(e.target.name);
-        let tcategeories=categeories;
+        /*let tcategeories=categeories;
         tcategeories[e.target.name]=e.target.checked;
         //console.log(tcategeories);
-        setCategeories(tcategeories);
-        fetchdata();
+        setCategeories(tcategeories);*/
+        dispatch(productsactions.setCategeories(e));
+        dispatch(getproductsthunk());
+        //fetchdata();
     }   
     async function addtocart(prodId)
     {
-        let userdoc=doc(db,'users',user);
+        dispatch(addtocartthunk({user:user,'prodid':prodId,'nav':navigate}));
+        /*let userdoc=doc(db,'users',user);
         let proddoc=doc(db,'products',prodId);
         if(!user)
         {
@@ -150,7 +163,7 @@ function Dashboard()
                 let newdoc=await addDoc(collection(db,'userCart'),{'product':[{'count':1,'productid':proddoc}],'user':userdoc});
                 
             }
-        }
+        }*/
     }
     function Sidebar()
     {
@@ -158,7 +171,7 @@ function Dashboard()
             <div style={{position:'fixed',left:'10px',top:'30vh',width:'17.5vw',height:'55vh',backgroundColor:'lightgray',borderRadius:'10px',display:'flex',flexDirection:'column',alignItems:'center'}}>
                 <p style={styles.h2style}>Filter</p>
                 <p style={{marginBottom:'0px'}} >Price : {pfilter}</p>
-                <input type='range' max={50000} value={pfilter} onChange={(e)=>{setprice((fprice)=>e.target.value);}} />
+                <input type='range' max={50000} value={pfilter} onChange={(e)=>{dispatch(productsactions.setFilter(e.target.value));dispatch(getproductsthunk());}} />
                 <p style={{...styles.h2style}}>Category</p>
                 <div style={{textAlign:'left',lineHeight:'2'}}>
                 <label><input type='checkbox' name="mensclothing" checked={categeories['mensclothing']} onChange={(e)=>{handleCategeories(e)}}/>Men's Clothing</label><br />
@@ -175,7 +188,7 @@ function Dashboard()
             <Sidebar />
             <div style={{marginLeft:'20vw',width:'80vw',display:'flex',flexDirection:'column',alignItems:'center',padding:'20px 40px'}}>
                 <div>
-                    <input type="text" placeholder="Search" style={{height:'40px',width:'240px',fontSize:'20px'}} onChange={(e)=>{setText(e.target.value)}}/>
+                    <input type="text" placeholder="Search" style={{height:'40px',width:'240px',fontSize:'20px'}} onChange={(e)=>{dispatch(productsactions.setsearchtext(e.target.value));dispatch(getproductsthunk())}}/>
                 </div>
                 <div class='Itemsdiv' style={{width:'inherit'}}>
                     <Items products={products} addtocart={addtocart} />

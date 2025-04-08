@@ -1,17 +1,21 @@
 import { useState,useEffect,useRef,useContext } from "react";
-import userContext from "../usercontext";
+//import userContext from "../usercontext";
 import { db } from "../firebase-init";
 import { getDoc,addDoc,setDoc,updateDoc,doc,collection,query, and,where, getDocs } from "firebase/firestore";
 import { redirect,useNavigate } from "react-router-dom";
+import { loginthunk } from "../redux/authslice";
+import { useDispatch } from "react-redux";
 
 function Signin()
 {
-    let {user,setUser}=useContext(userContext);
+    //let {user,setUser}=useContext(userContext);
     let navigate=useNavigate();
+    const dispatch=useDispatch();
     const Trylogin=async (e)=>
     {  
         e.preventDefault();
-        let email=e.target[0].value;
+        dispatch(loginthunk({email:e.target[0].value,password:e.target[1].value,'nav':navigate}));
+        /*let email=e.target[0].value;
         let password=e.target[1].value;
         let myquery=query(collection(db,'users'),where('email','==',email),where('password','==',password));
         let userdata=await getDocs(myquery);
@@ -27,7 +31,7 @@ function Signin()
                 console.log(res.data());
                 navigate('/');
             }); 
-        }
+        }*/
     }
 
     return(
